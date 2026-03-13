@@ -1,5 +1,17 @@
 package school.work.skillswap_b.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class SkillOffer {
-    //probably name & other stuff will go here, skillname, skillyearofexperience etc....
+    private String title;
+    private String description;
+    private String category;
+    private String ownerName;
+
+    public boolean isValid() {
+        return title != null && !title.isEmpty();
+    }
 }
