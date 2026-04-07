@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Entity
@@ -17,4 +19,6 @@ public class SkillOfferEntity {
     private String description;
     private String category;
     private String ownerName;
+    private LocalDateTime creationDate;
+    private LocalDateTime expirationDate;
 }
