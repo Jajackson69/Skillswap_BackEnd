@@ -6,8 +6,8 @@ stages:
 build-job:
   stage: build
   script:
-    - rm -r -fo .gradle -ErrorAction SilentlyContinue
-    - rm -r -fo build -ErrorAction SilentlyContinue
+    - powershell -Command "Remove-Item -Recurse -Force .gradle -ErrorAction SilentlyContinue"
+    - powershell -Command "Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue"
     - ./gradlew clean build -x test
   artifacts:
     paths:
