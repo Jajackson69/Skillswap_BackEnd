@@ -6,13 +6,12 @@ stages:
 build-job:
   stage: build
   script:
-    - rm -r -fo .gradle
-    - rm -r -fo build
+    - rm -r -fo .gradle -ErrorAction SilentlyContinue
+    - rm -r -fo build -ErrorAction SilentlyContinue
     - ./gradlew clean build -x test
   artifacts:
     paths:
       - build/libs/
-
 test-job:
   stage: test
   script:
