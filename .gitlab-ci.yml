@@ -3,15 +3,20 @@ stages:
   - test
   - deploy
 
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
 build-job:
   stage: build
   script:
-    - powershell -Command "Remove-Item -Recurse -Force .gradle -ErrorAction SilentlyContinue"
-    - powershell -Command "Remove-Item -Recurse -Force build -ErrorAction SilentlyContinue"
+    - powershell -Command "if (Test-Path .gradle) { Remove-Item -Recurse -Force .gradle }"
+    - powershell -Command "if (Test-Path build) { Remove-Item -Recurse -Force build }"
+    - java -version
     - ./gradlew clean build -x test
   artifacts:
     paths:
       - build/libs/
+
 test-job:
   stage: test
   script:

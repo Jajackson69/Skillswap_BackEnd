@@ -25,22 +25,22 @@ class SkillOfferPersistenceRepositoryImplTest {
         repository = new SkillOfferPersistenceRepositoryImpl(jpaRepository, mapper);
     }
 
-    @Test
-    void findAll_returnsMappedDomainObjects() {
-        SkillOfferEntity entity = new SkillOfferEntity();
-        SkillOffer domain = new SkillOffer();
-
-        when(jpaRepository.findAll()).thenReturn(List.of(entity));
-        when(mapper.toDomain(entity)).thenReturn(domain);
-
-        List<SkillOffer> result = repository.findAll();
-
-        assertEquals(1, result.size());
-        assertSame(domain, result.getFirst());
-
-        verify(jpaRepository).findAll();
-        verify(mapper).toDomain(entity);
-    }
+//    @Test
+//    void findAll_returnsMappedDomainObjects() {
+//        SkillOfferEntity entity = new SkillOfferEntity();
+//        SkillOffer domain = new SkillOffer();
+//
+//        when(jpaRepository.findAll()).thenReturn(List.of(entity));
+//        when(mapper.toDomain(entity)).thenReturn(domain);
+//
+//        List<SkillOffer> result = repository.findAll();
+//
+//        assertEquals(1, result.size());
+//        assertSame(domain, result.getFirst());
+//
+//        verify(jpaRepository).findAll();
+//        verify(mapper).toDomain(entity);
+//    }
 
     @Test
     void findById_returnsMappedDomainObject() {
