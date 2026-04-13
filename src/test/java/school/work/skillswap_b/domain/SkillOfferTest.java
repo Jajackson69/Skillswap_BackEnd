@@ -9,62 +9,97 @@ import static org.junit.jupiter.api.Assertions.*;
 class SkillOfferTest {
 
     @Test
-    void isExpired_returnsTrue_whenExpirationDateIsPast() {
+    void isExpired_shouldReturnTrue_whenExpirationDateIsInPast() {
+        // Arrange
         SkillOffer offer = new SkillOffer();
         offer.setExpirationDate(LocalDateTime.now().minusDays(1));
 
-        assertTrue(offer.isExpired());
+        // Act
+        boolean result = offer.isExpired();
+
+        // Assert
+        assertTrue(result);
     }
 
     @Test
-    void isExpired_returnsFalse_whenExpirationDateIsFuture() {
+    void isExpired_shouldReturnFalse_whenExpirationDateIsInFuture() {
+        // Arrange
         SkillOffer offer = new SkillOffer();
         offer.setExpirationDate(LocalDateTime.now().plusDays(1));
 
-        assertFalse(offer.isExpired());
+        // Act
+        boolean result = offer.isExpired();
+
+        // Assert
+        assertFalse(result);
     }
 
     @Test
-    void isExpired_returnsFalse_whenExpirationDateIsNull() {
+    void isExpired_shouldReturnFalse_whenExpirationDateIsNull() {
+        // Arrange
         SkillOffer offer = new SkillOffer();
         offer.setExpirationDate(null);
 
-        assertFalse(offer.isExpired());
+        // Act
+        boolean result = offer.isExpired();
+
+        // Assert
+        assertFalse(result);
     }
 
     @Test
-    void isActive_returnsTrue_whenNotExpired_andTitlePresent() {
+    void isActive_shouldReturnTrue_whenNotExpiredAndTitleIsValid() {
+        // Arrange
         SkillOffer offer = new SkillOffer();
         offer.setTitle("Java");
         offer.setExpirationDate(LocalDateTime.now().plusDays(1));
 
-        assertTrue(offer.isActive());
+        // Act
+        boolean result = offer.isActive();
+
+        // Assert
+        assertTrue(result);
     }
 
     @Test
-    void isActive_returnsFalse_whenExpired() {
+    void isActive_shouldReturnFalse_whenExpired() {
+        // Arrange
         SkillOffer offer = new SkillOffer();
         offer.setTitle("Java");
         offer.setExpirationDate(LocalDateTime.now().minusDays(1));
 
-        assertFalse(offer.isActive());
+        // Act
+        boolean result = offer.isActive();
+
+        // Assert
+        assertFalse(result);
     }
 
     @Test
-    void isActive_returnsFalse_whenTitleIsNull() {
+    void isActive_shouldReturnFalse_whenTitleIsNull() {
+        // Arrange
         SkillOffer offer = new SkillOffer();
         offer.setTitle(null);
         offer.setExpirationDate(LocalDateTime.now().plusDays(1));
 
-        assertFalse(offer.isActive());
+        // Act
+        boolean result = offer.isActive();
+
+        // Assert
+        assertFalse(result);
     }
 
     @Test
-    void isActive_returnsFalse_whenTitleIsEmpty() {
+    void isActive_shouldReturnFalse_whenTitleIsEmpty() {
+        // Arrange
         SkillOffer offer = new SkillOffer();
         offer.setTitle("");
         offer.setExpirationDate(LocalDateTime.now().plusDays(1));
 
-        assertFalse(offer.isActive());
+        // Act
+        boolean result = offer.isActive();
+
+        // Assert
+        assertFalse(result);
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class SkillOffer {
-    private Long id;
+    private long id;
     private String title;
     private String description;
     private String category;

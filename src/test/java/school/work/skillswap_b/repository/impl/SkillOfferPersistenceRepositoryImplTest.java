@@ -19,71 +19,72 @@ class SkillOfferPersistenceRepositoryImplTest {
     private SkillOfferPersistenceRepositoryImpl repository;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         jpaRepository = mock(SkillOfferRepository.class);
         mapper = mock(SkillOfferEntityMapper.class);
         repository = new SkillOfferPersistenceRepositoryImpl(jpaRepository, mapper);
     }
 
-//    @Test
-//    void findAll_returnsMappedDomainObjects() {
-//        SkillOfferEntity entity = new SkillOfferEntity();
-//        SkillOffer domain = new SkillOffer();
-//
-//        when(jpaRepository.findAll()).thenReturn(List.of(entity));
-//        when(mapper.toDomain(entity)).thenReturn(domain);
-//
-//        List<SkillOffer> result = repository.findAll();
-//
-//        assertEquals(1, result.size());
-//        assertSame(domain, result.getFirst());
-//
-//        verify(jpaRepository).findAll();
-//        verify(mapper).toDomain(entity);
-//    }
+    @Test
+    void findAll_shouldReturnMappedDomainList() {
+        // Arrange
+        SkillOfferEntity entity = new SkillOfferEntity();
+        SkillOffer domain = new SkillOffer();
+
+        when(jpaRepository.findAll()).thenReturn(List.of(entity));
+        when(mapper.toDomain(entity)).thenReturn(domain);
+
+        // Act
+        List<SkillOffer> result = repository.findAll();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertSame(domain, result.get(0));
+
+        verify(jpaRepository).findAll();
+        verify(mapper).toDomain(entity);
+    }
 
     @Test
-    void findById_returnsMappedDomainObject() {
-        // ========================
+    void findById_shouldReturnMappedDomain_whenEntityExists() {
         // Arrange
-        // ========================
         Long id = 1L;
-
         SkillOfferEntity entity = new SkillOfferEntity();
-        SkillOffer expectedDomain = new SkillOffer();
+        SkillOffer expected = new SkillOffer();
 
         when(jpaRepository.findById(id)).thenReturn(java.util.Optional.of(entity));
-        when(mapper.toDomain(entity)).thenReturn(expectedDomain);
+        when(mapper.toDomain(entity)).thenReturn(expected);
 
-        // ========================
         // Act
-        // ========================
         SkillOffer result = repository.findById(id);
 
-        // ========================
         // Assert
-        // ========================
         assertNotNull(result);
-        assertSame(expectedDomain, result);
+        assertSame(expected, result);
 
         verify(jpaRepository).findById(id);
         verify(mapper).toDomain(entity);
     }
 
     @Test
-    void save_mapsDomainToEntity_andBack() {
+    void save_shouldMapDomainToEntity_andReturnMappedDomain() {
+        // Arrange
         SkillOffer domain = new SkillOffer();
         SkillOfferEntity entity = new SkillOfferEntity();
         SkillOfferEntity savedEntity = new SkillOfferEntity();
-        SkillOffer savedDomain = new SkillOffer();
+        SkillOffer expected = new SkillOffer();
 
         when(mapper.toEntity(domain)).thenReturn(entity);
         when(jpaRepository.save(entity)).thenReturn(savedEntity);
-        when(mapper.toDomain(savedEntity)).thenReturn(savedDomain);
+        when(mapper.toDomain(savedEntity)).thenReturn(expected);
 
+        // Act
         SkillOffer result = repository.save(domain);
 
-        assertSame(savedDomain, result);
+        // Assert
+        assertNotNull(result);
+        assertSame(expected, result);
 
         verify(mapper).toEntity(domain);
         verify(jpaRepository).save(entity);
@@ -91,10 +92,8 @@ class SkillOfferPersistenceRepositoryImplTest {
     }
 
     @Test
-    void update_updatesEntityFields_andReturnsMappedDomain() {
-        // ========================
+    void update_shouldUpdateEntity_andReturnMappedDomain_whenEntityExists() {
         // Arrange
-        // ========================
         Long id = 1L;
 
         SkillOffer domain = new SkillOffer();
@@ -108,49 +107,50 @@ class SkillOfferPersistenceRepositoryImplTest {
         savedEntity.setId(id);
         savedEntity.setTitle("New Title");
 
-        SkillOffer expectedResult = new SkillOffer();
-        expectedResult.setId(id);
-        expectedResult.setTitle("New Title");
+        SkillOffer expected = new SkillOffer();
+        expected.setId(id);
+        expected.setTitle("New Title");
 
         when(jpaRepository.findById(id)).thenReturn(java.util.Optional.of(entity));
         when(jpaRepository.save(entity)).thenReturn(savedEntity);
-        when(mapper.toDomain(savedEntity)).thenReturn(expectedResult);
+        when(mapper.toDomain(savedEntity)).thenReturn(expected);
 
-        // ========================
         // Act
-        // ========================
         SkillOffer result = repository.update(id, domain);
 
-        // ========================
         // Assert
-        // ========================
-        // Verify entity was updated
-        assertEquals("New Title", entity.getTitle());
-
-        // Verify returned value
         assertNotNull(result);
-        assertSame(expectedResult, result);
+        assertEquals("New Title", entity.getTitle());
+        assertSame(expected, result);
 
-        // Verify interactions
         verify(jpaRepository).findById(id);
         verify(jpaRepository).save(entity);
         verify(mapper).toDomain(savedEntity);
     }
 
     @Test
-    void deleteById_callsJpaRepository() {
-        repository.deleteById(1L);
+    void deleteById_shouldCallJpaRepository() {
+        // Arrange
+        Long id = 1L;
 
-        verify(jpaRepository).deleteById(1L);
+        // Act
+        repository.deleteById(id);
+
+        // Assert
+        verify(jpaRepository).deleteById(id);
     }
 
     @Test
-    void existsById_callsJpaRepository() {
-        when(jpaRepository.existsById(1L)).thenReturn(true);
+    void existsById_shouldReturnTrue_whenEntityExists() {
+        // Arrange
+        Long id = 1L;
+        when(jpaRepository.existsById(id)).thenReturn(true);
 
-        boolean result = repository.existsById(1L);
+        // Act
+        boolean result = repository.existsById(id);
 
+        // Assert
         assertTrue(result);
-        verify(jpaRepository).existsById(1L);
+        verify(jpaRepository).existsById(id);
     }
 }

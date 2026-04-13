@@ -14,7 +14,8 @@ class SkillOfferDtoMapperTest {
     private final SkillOfferDtoMapper mapper = new SkillOfferDtoMapper();
 
     @Test
-    void toDomain_mapsRequestToDomain() {
+    void toDomain_shouldMapAllFieldsCorrectly() {
+        // Arrange
         CreateSkillOfferRequest request = new CreateSkillOfferRequest();
         request.setTitle("Java");
         request.setDescription("Learn Java");
@@ -22,17 +23,21 @@ class SkillOfferDtoMapperTest {
         request.setOwnerName("Alice");
         request.setExpirationDate(LocalDateTime.now().plusDays(1));
 
-        SkillOffer domain = mapper.toDomain(request);
+        // Act
+        SkillOffer result = mapper.toDomain(request);
 
-        assertEquals(request.getTitle(), domain.getTitle());
-        assertEquals(request.getDescription(), domain.getDescription());
-        assertEquals(request.getCategory(), domain.getCategory());
-        assertEquals(request.getOwnerName(), domain.getOwnerName());
-        assertEquals(request.getExpirationDate(), domain.getExpirationDate());
+        // Assert
+        assertNotNull(result);
+        assertEquals(request.getTitle(), result.getTitle());
+        assertEquals(request.getDescription(), result.getDescription());
+        assertEquals(request.getCategory(), result.getCategory());
+        assertEquals(request.getOwnerName(), result.getOwnerName());
+        assertEquals(request.getExpirationDate(), result.getExpirationDate());
     }
 
     @Test
-    void toResponse_mapsDomainToResponse() {
+    void toResponse_shouldMapAllFieldsCorrectly() {
+        // Arrange
         SkillOffer domain = new SkillOffer();
         domain.setId(1L);
         domain.setTitle("Java");
@@ -42,14 +47,17 @@ class SkillOfferDtoMapperTest {
         domain.setCreationDate(LocalDateTime.now());
         domain.setExpirationDate(LocalDateTime.now().plusDays(1));
 
-        SkillOfferResponse response = mapper.toResponse(domain);
+        // Act
+        SkillOfferResponse result = mapper.toResponse(domain);
 
-        assertEquals(domain.getId(), response.getId());
-        assertEquals(domain.getTitle(), response.getTitle());
-        assertEquals(domain.getDescription(), response.getDescription());
-        assertEquals(domain.getCategory(), response.getCategory());
-        assertEquals(domain.getOwnerName(), response.getOwnerName());
-        assertEquals(domain.getCreationDate(), response.getCreationDate());
-        assertEquals(domain.getExpirationDate(), response.getExpirationDate());
+        // Assert
+        assertNotNull(result);
+        assertEquals(domain.getId(), result.getId());
+        assertEquals(domain.getTitle(), result.getTitle());
+        assertEquals(domain.getDescription(), result.getDescription());
+        assertEquals(domain.getCategory(), result.getCategory());
+        assertEquals(domain.getOwnerName(), result.getOwnerName());
+        assertEquals(domain.getCreationDate(), result.getCreationDate());
+        assertEquals(domain.getExpirationDate(), result.getExpirationDate());
     }
 }

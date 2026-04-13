@@ -13,7 +13,8 @@ class SkillOfferEntityMapperTest {
     private final SkillOfferEntityMapper mapper = new SkillOfferEntityMapper();
 
     @Test
-    void toEntity_mapsDomainToEntity() {
+    void toEntity_shouldMapAllFieldsCorrectly() {
+        // Arrange
         SkillOffer domain = new SkillOffer();
         domain.setTitle("Java");
         domain.setDescription("Learn Java");
@@ -22,18 +23,22 @@ class SkillOfferEntityMapperTest {
         domain.setCreationDate(LocalDateTime.now());
         domain.setExpirationDate(LocalDateTime.now().plusDays(1));
 
-        SkillOfferEntity entity = mapper.toEntity(domain);
+        // Act
+        SkillOfferEntity result = mapper.toEntity(domain);
 
-        assertEquals(domain.getTitle(), entity.getTitle());
-        assertEquals(domain.getDescription(), entity.getDescription());
-        assertEquals(domain.getCategory(), entity.getCategory());
-        assertEquals(domain.getOwnerName(), entity.getOwnerName());
-        assertEquals(domain.getCreationDate(), entity.getCreationDate());
-        assertEquals(domain.getExpirationDate(), entity.getExpirationDate());
+        // Assert
+        assertNotNull(result);
+        assertEquals(domain.getTitle(), result.getTitle());
+        assertEquals(domain.getDescription(), result.getDescription());
+        assertEquals(domain.getCategory(), result.getCategory());
+        assertEquals(domain.getOwnerName(), result.getOwnerName());
+        assertEquals(domain.getCreationDate(), result.getCreationDate());
+        assertEquals(domain.getExpirationDate(), result.getExpirationDate());
     }
 
     @Test
-    void toDomain_mapsEntityToDomain() {
+    void toDomain_shouldMapAllFieldsCorrectly() {
+        // Arrange
         SkillOfferEntity entity = new SkillOfferEntity();
         entity.setId(1L);
         entity.setTitle("Java");
@@ -43,14 +48,17 @@ class SkillOfferEntityMapperTest {
         entity.setCreationDate(LocalDateTime.now());
         entity.setExpirationDate(LocalDateTime.now().plusDays(1));
 
-        SkillOffer domain = mapper.toDomain(entity);
+        // Act
+        SkillOffer result = mapper.toDomain(entity);
 
-        assertEquals(entity.getId(), domain.getId());
-        assertEquals(entity.getTitle(), domain.getTitle());
-        assertEquals(entity.getDescription(), domain.getDescription());
-        assertEquals(entity.getCategory(), domain.getCategory());
-        assertEquals(entity.getOwnerName(), domain.getOwnerName());
-        assertEquals(entity.getCreationDate(), domain.getCreationDate());
-        assertEquals(entity.getExpirationDate(), domain.getExpirationDate());
+        // Assert
+        assertNotNull(result);
+        assertEquals(entity.getId(), result.getId());
+        assertEquals(entity.getTitle(), result.getTitle());
+        assertEquals(entity.getDescription(), result.getDescription());
+        assertEquals(entity.getCategory(), result.getCategory());
+        assertEquals(entity.getOwnerName(), result.getOwnerName());
+        assertEquals(entity.getCreationDate(), result.getCreationDate());
+        assertEquals(entity.getExpirationDate(), result.getExpirationDate());
     }
 }
