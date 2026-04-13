@@ -1,5 +1,6 @@
 package school.work.skillswap_b.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,8 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class SkillOffer {
-    private long id;
+    @Setter(AccessLevel.NONE)
+    private Long id;
     private String title;
     private String description;
     private String category;
