@@ -14,10 +14,15 @@ public class SkillOffer {
     private String title;
     private String description;
     private String category;
-    private String ownerName;
+    private User owner;
     private LocalDateTime creationDate;
     private LocalDateTime expirationDate;
 
+    public SkillOffer() {}
+
+    public SkillOffer(Long id) {
+        this.id = id;
+    }
     public boolean isExpired() {
         return expirationDate != null && LocalDateTime.now().isAfter(expirationDate);
     }

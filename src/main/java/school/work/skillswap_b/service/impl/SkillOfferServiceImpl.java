@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import school.work.skillswap_b.controller.mappers.SkillOfferDtoMapper;
 import school.work.skillswap_b.domain.SkillOffer;
+import school.work.skillswap_b.domain.User;
 import school.work.skillswap_b.dto.CreateSkillOfferRequest;
 import school.work.skillswap_b.dto.SkillOfferResponse;
 import school.work.skillswap_b.repository.interfaces.SkillOfferPersistenceRepository;
+import school.work.skillswap_b.repository.interfaces.UserPersistenceRepository;
 import school.work.skillswap_b.service.interfaces.SkillOfferService;
 
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import java.util.List;
 public class SkillOfferServiceImpl implements SkillOfferService {
 
     private final SkillOfferPersistenceRepository repository;
+    private final UserPersistenceRepository userRepository; // ← ajouté pour fetcher le user
     private final SkillOfferDtoMapper mapper;
 
     @Override
@@ -40,7 +43,8 @@ public class SkillOfferServiceImpl implements SkillOfferService {
 
     @Override
     public SkillOfferResponse create(CreateSkillOfferRequest request) {
-        SkillOffer domain = mapper.toDomain(request);
+        User owner = userRepository.findById(request.getUserId());
+        SkillOffer domain = mapper.toDomain(request, owner);
         domain.setCreationDate(LocalDateTime.now());
 
         SkillOffer saved = repository.save(domain);
@@ -53,7 +57,8 @@ public class SkillOfferServiceImpl implements SkillOfferService {
             throw new RuntimeException("SkillOffer with id " + id + " not found");
         }
 
-        SkillOffer updated = mapper.toDomain(request);
+        User owner = userRepository.findById(request.getUserId());
+        SkillOffer updated = mapper.toDomain(request, owner);
         SkillOffer saved = repository.update(id, updated);
 
         return mapper.toResponse(saved);

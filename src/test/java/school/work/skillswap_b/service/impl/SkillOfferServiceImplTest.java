@@ -4,9 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import school.work.skillswap_b.controller.mappers.SkillOfferDtoMapper;
 import school.work.skillswap_b.domain.SkillOffer;
+import school.work.skillswap_b.domain.User;
 import school.work.skillswap_b.dto.CreateSkillOfferRequest;
 import school.work.skillswap_b.dto.SkillOfferResponse;
 import school.work.skillswap_b.repository.interfaces.SkillOfferPersistenceRepository;
+import school.work.skillswap_b.repository.interfaces.UserPersistenceRepository;
+import school.work.skillswap_b.repository.interfaces.UserRepository;
 
 import java.util.List;
 
@@ -16,14 +19,16 @@ import static org.mockito.Mockito.*;
 class SkillOfferServiceImplTest {
 
     private SkillOfferPersistenceRepository repository;
+    private UserPersistenceRepository userRepository;
     private SkillOfferDtoMapper mapper;
     private SkillOfferServiceImpl service;
 
     @BeforeEach
     void setUp() {
         repository = mock(SkillOfferPersistenceRepository.class);
+        userRepository = mock(UserPersistenceRepository.class);
         mapper = mock(SkillOfferDtoMapper.class);
-        service = new SkillOfferServiceImpl(repository, mapper);
+        service = new SkillOfferServiceImpl(repository, userRepository, mapper);
     }
 
     @Test
@@ -83,12 +88,18 @@ class SkillOfferServiceImplTest {
     @Test
     void create_shouldSaveAndReturnResponse() {
         // Arrange
+        Long userId = 1L;
+        User owner = new User(userId);
+
         CreateSkillOfferRequest request = new CreateSkillOfferRequest();
+        request.setUserId(userId);
+
         SkillOffer domain = new SkillOffer();
         SkillOffer saved = new SkillOffer();
         SkillOfferResponse expected = new SkillOfferResponse();
 
-        when(mapper.toDomain(request)).thenReturn(domain);
+        when(userRepository.findById(userId)).thenReturn(owner);
+        when(mapper.toDomain(request, owner)).thenReturn(domain);
         when(repository.save(domain)).thenReturn(saved);
         when(mapper.toResponse(saved)).thenReturn(expected);
 
@@ -99,7 +110,8 @@ class SkillOfferServiceImplTest {
         assertNotNull(result);
         assertSame(expected, result);
 
-        verify(mapper).toDomain(request);
+        verify(userRepository).findById(userId);
+        verify(mapper).toDomain(request, owner);
         verify(repository).save(domain);
         verify(mapper).toResponse(saved);
     }
@@ -108,14 +120,19 @@ class SkillOfferServiceImplTest {
     void update_shouldUpdateAndReturnResponse_whenOfferExists() {
         // Arrange
         Long id = 1L;
+        Long userId = 2L;
+        User owner = new User(userId);
+
         CreateSkillOfferRequest request = new CreateSkillOfferRequest();
+        request.setUserId(userId);
 
         SkillOffer domain = new SkillOffer();
         SkillOffer updated = new SkillOffer();
         SkillOfferResponse expected = new SkillOfferResponse();
 
         when(repository.existsById(id)).thenReturn(true);
-        when(mapper.toDomain(request)).thenReturn(domain);
+        when(userRepository.findById(userId)).thenReturn(owner);
+        when(mapper.toDomain(request, owner)).thenReturn(domain);
         when(repository.update(id, domain)).thenReturn(updated);
         when(mapper.toResponse(updated)).thenReturn(expected);
 
@@ -127,7 +144,7 @@ class SkillOfferServiceImplTest {
         assertSame(expected, result);
 
         verify(repository).existsById(id);
-        verify(mapper).toDomain(request);
+        verify(mapper).toDomain(request, owner);
         verify(repository).update(id, domain);
         verify(mapper).toResponse(updated);
     }

@@ -2,20 +2,27 @@ package school.work.skillswap_b.controller.mappers;
 
 import org.springframework.stereotype.Component;
 import school.work.skillswap_b.domain.SkillOffer;
+import school.work.skillswap_b.domain.User;
 import school.work.skillswap_b.dto.CreateSkillOfferRequest;
 import school.work.skillswap_b.dto.SkillOfferResponse;
 
 @Component
 public class SkillOfferDtoMapper {
 
-    public SkillOffer toDomain(CreateSkillOfferRequest request) {
+    private final UserDtoMapper userDtoMapper;
+
+    public SkillOfferDtoMapper(UserDtoMapper userDtoMapper) {
+        this.userDtoMapper = userDtoMapper;
+    }
+
+    public SkillOffer toDomain(CreateSkillOfferRequest request, User  owner) {
         if (request == null) return null;
 
         SkillOffer domain = new SkillOffer();
         domain.setTitle(request.getTitle());
         domain.setDescription(request.getDescription());
         domain.setCategory(request.getCategory());
-        domain.setOwnerName(request.getOwnerName());
+        domain.setOwner(owner);
         domain.setExpirationDate(request.getExpirationDate());
         return domain;
     }
@@ -28,7 +35,7 @@ public class SkillOfferDtoMapper {
         response.setTitle(domain.getTitle());
         response.setDescription(domain.getDescription());
         response.setCategory(domain.getCategory());
-        response.setOwnerName(domain.getOwnerName());
+        response.setOwner(userDtoMapper.toResponse(domain.getOwner()));
         response.setCreationDate(domain.getCreationDate());
         response.setExpirationDate(domain.getExpirationDate());
         return response;

@@ -2,45 +2,41 @@ package school.work.skillswap_b.repository.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import school.work.skillswap_b.domain.SkillOffer;
 import school.work.skillswap_b.domain.User;
-import school.work.skillswap_b.entity.SkillOfferEntity;
 import school.work.skillswap_b.entity.UserEntity;
-import school.work.skillswap_b.repository.interfaces.SkillOfferRepository;
-import school.work.skillswap_b.repository.mappers.SkillOfferEntityMapper;
+import school.work.skillswap_b.repository.interfaces.UserRepository;
 import school.work.skillswap_b.repository.mappers.UserEntityMapper;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class SkillOfferPersistenceRepositoryImplTest {
+class UserPersistenceRepositoryImplTest {
 
-    private SkillOfferRepository jpaRepository;
-    private SkillOfferEntityMapper mapper;
-    private UserEntityMapper userEntityMapper;
-    private SkillOfferPersistenceRepositoryImpl repository;
+    private UserRepository jpaRepository;
+    private UserEntityMapper mapper;
+    private UserPersistenceRepositoryImpl repository;
 
     @BeforeEach
     void setUp() {
-        jpaRepository = mock(SkillOfferRepository.class);
-        mapper = mock(SkillOfferEntityMapper.class);
-        userEntityMapper = mock(UserEntityMapper.class);
-        repository = new SkillOfferPersistenceRepositoryImpl(jpaRepository, mapper, userEntityMapper);
+        jpaRepository = mock(UserRepository.class);
+        mapper = mock(UserEntityMapper.class);
+        repository = new UserPersistenceRepositoryImpl(jpaRepository, mapper);
     }
 
     @Test
     void findAll_shouldReturnMappedDomainList() {
         // Arrange
-        SkillOfferEntity entity = new SkillOfferEntity();
-        SkillOffer domain = new SkillOffer();
+        UserEntity entity = new UserEntity();
+        User domain = new User();
 
         when(jpaRepository.findAll()).thenReturn(List.of(entity));
         when(mapper.toDomain(entity)).thenReturn(domain);
 
         // Act
-        List<SkillOffer> result = repository.findAll();
+        List<User> result = repository.findAll();
 
         // Assert
         assertNotNull(result);
@@ -55,14 +51,14 @@ class SkillOfferPersistenceRepositoryImplTest {
     void findById_shouldReturnMappedDomain_whenEntityExists() {
         // Arrange
         Long id = 1L;
-        SkillOfferEntity entity = new SkillOfferEntity();
-        SkillOffer expected = new SkillOffer();
+        UserEntity entity = new UserEntity();
+        User expected = new User(id);
 
-        when(jpaRepository.findById(id)).thenReturn(java.util.Optional.of(entity));
+        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
         when(mapper.toDomain(entity)).thenReturn(expected);
 
         // Act
-        SkillOffer result = repository.findById(id);
+        User result = repository.findById(id);
 
         // Assert
         assertNotNull(result);
@@ -73,19 +69,31 @@ class SkillOfferPersistenceRepositoryImplTest {
     }
 
     @Test
+    void findById_shouldThrowException_whenEntityNotFound() {
+        // Arrange
+        Long id = 99L;
+        when(jpaRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> repository.findById(id));
+
+        verify(jpaRepository).findById(id);
+    }
+
+    @Test
     void save_shouldMapDomainToEntity_andReturnMappedDomain() {
         // Arrange
-        SkillOffer domain = new SkillOffer();
-        SkillOfferEntity entity = new SkillOfferEntity();
-        SkillOfferEntity savedEntity = new SkillOfferEntity();
-        SkillOffer expected = new SkillOffer();
+        User domain = new User();
+        UserEntity entity = new UserEntity();
+        UserEntity savedEntity = new UserEntity();
+        User expected = new User(1L);
 
         when(mapper.toEntity(domain)).thenReturn(entity);
         when(jpaRepository.save(entity)).thenReturn(savedEntity);
         when(mapper.toDomain(savedEntity)).thenReturn(expected);
 
         // Act
-        SkillOffer result = repository.save(domain);
+        User result = repository.save(domain);
 
         // Assert
         assertNotNull(result);
@@ -101,42 +109,49 @@ class SkillOfferPersistenceRepositoryImplTest {
         // Arrange
         Long id = 1L;
 
-        User owner  = new User(1L);
-        owner.setFirstName("Alice");
+        User domain = new User();
+        domain.setFirstName("New Name");
+        domain.setLastName("New Last");
+        domain.setEmail("new@gmail.com");
+        domain.setBio("New bio");
 
-        UserEntity ownerEntity = new UserEntity();
-        ownerEntity.setFirstName("Alice");
+        UserEntity entity = new UserEntity();
+        entity.setFirstName("Old Name");
 
-        SkillOffer domain = new SkillOffer();
-        domain.setTitle("New Title");
-        domain.setOwner(owner);
+        UserEntity savedEntity = new UserEntity();
+        savedEntity.setFirstName("New Name");
 
-        SkillOfferEntity entity = new SkillOfferEntity();
-        entity.setTitle("Old Title");
+        User expected = new User(id);
+        expected.setFirstName("New Name");
 
-        SkillOfferEntity savedEntity = new SkillOfferEntity();
-        savedEntity.setTitle("New Title");
-
-        SkillOffer expected = new SkillOffer();
-        expected.setTitle("New Title");
-
-        when(jpaRepository.findById(id)).thenReturn(java.util.Optional.of(entity));
-        when(userEntityMapper.toEntity(owner)).thenReturn(ownerEntity);
+        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
         when(jpaRepository.save(entity)).thenReturn(savedEntity);
         when(mapper.toDomain(savedEntity)).thenReturn(expected);
 
         // Act
-        SkillOffer result = repository.update(id, domain);
+        User result = repository.update(id, domain);
 
         // Assert
         assertNotNull(result);
-        assertEquals("New Title", entity.getTitle());
+        assertEquals("New Name", entity.getFirstName());
         assertSame(expected, result);
 
         verify(jpaRepository).findById(id);
-        verify(userEntityMapper).toEntity(owner);
         verify(jpaRepository).save(entity);
         verify(mapper).toDomain(savedEntity);
+    }
+
+    @Test
+    void update_shouldThrowException_whenEntityNotFound() {
+        // Arrange
+        Long id = 99L;
+        when(jpaRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> repository.update(id, new User()));
+
+        verify(jpaRepository).findById(id);
+        verify(jpaRepository, never()).save(any());
     }
 
     @Test
@@ -163,5 +178,19 @@ class SkillOfferPersistenceRepositoryImplTest {
         // Assert
         assertTrue(result);
         verify(jpaRepository).existsById(id);
+    }
+
+    @Test
+    void existsByEmail_shouldReturnTrue_whenEmailExists() {
+        // Arrange
+        String email = "alice@gmail.com";
+        when(jpaRepository.existsByEmail(email)).thenReturn(true);
+
+        // Act
+        boolean result = repository.existsByEmail(email);
+
+        // Assert
+        assertTrue(result);
+        verify(jpaRepository).existsByEmail(email);
     }
 }

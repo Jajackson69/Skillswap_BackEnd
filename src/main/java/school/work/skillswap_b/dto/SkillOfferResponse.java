@@ -20,12 +20,11 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class SkillOfferResponse {
-    @Setter(AccessLevel.NONE)
     private Long id;
     private String title;
     private String description;
     private String category;
-    private String ownerName;
+    private UserResponse owner;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDateTime creationDate;
     @JsonFormat(pattern = "dd-MM-yyyy")

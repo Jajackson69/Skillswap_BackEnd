@@ -18,6 +18,6 @@ public class CreateSkillOfferRequest {
     private String description;
     @NotBlank(message = "Category is required")
     private String category;
-    private String ownerName;
+    private Long userId;
     private LocalDateTime expirationDate;
 }

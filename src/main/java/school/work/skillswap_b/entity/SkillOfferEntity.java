@@ -20,7 +20,9 @@ public class SkillOfferEntity {
     private String title;
     private String description;
     private String category;
-    private String ownerName;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity owner; //changed ownername to match user entity
     private LocalDateTime creationDate;
     private LocalDateTime expirationDate;
 }

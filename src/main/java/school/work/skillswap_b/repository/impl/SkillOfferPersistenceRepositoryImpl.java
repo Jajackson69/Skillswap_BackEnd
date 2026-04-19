@@ -7,6 +7,7 @@ import school.work.skillswap_b.entity.SkillOfferEntity;
 import school.work.skillswap_b.repository.interfaces.SkillOfferRepository;
 import school.work.skillswap_b.repository.interfaces.SkillOfferPersistenceRepository;
 import school.work.skillswap_b.repository.mappers.SkillOfferEntityMapper;
+import school.work.skillswap_b.repository.mappers.UserEntityMapper;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class SkillOfferPersistenceRepositoryImpl implements SkillOfferPersistenc
 
     private final SkillOfferRepository jpaRepository;
     private final SkillOfferEntityMapper mapper;
+    private final UserEntityMapper userEntityMapper;
 
     @Override
     public List<SkillOffer> findAll() {
@@ -48,7 +50,7 @@ public class SkillOfferPersistenceRepositoryImpl implements SkillOfferPersistenc
         entity.setTitle(domain.getTitle());
         entity.setDescription(domain.getDescription());
         entity.setCategory(domain.getCategory());
-        entity.setOwnerName(domain.getOwnerName());
+        entity.setOwner(userEntityMapper.toEntity(domain.getOwner()));
         entity.setCreationDate(domain.getCreationDate());
         entity.setExpirationDate(domain.getExpirationDate());
 

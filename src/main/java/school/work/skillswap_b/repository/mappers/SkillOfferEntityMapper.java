@@ -7,6 +7,11 @@ import school.work.skillswap_b.entity.SkillOfferEntity;
 @Component
 public class SkillOfferEntityMapper {
 
+    private final UserEntityMapper userEntityMapper;
+
+    public SkillOfferEntityMapper(UserEntityMapper userEntityMapper) {
+        this.userEntityMapper = userEntityMapper;
+    }
     public SkillOfferEntity toEntity(SkillOffer domain) {
         if (domain == null) {
             return null;
@@ -17,7 +22,7 @@ public class SkillOfferEntityMapper {
         entity.setTitle(domain.getTitle());
         entity.setDescription(domain.getDescription());
         entity.setCategory(domain.getCategory());
-        entity.setOwnerName(domain.getOwnerName());
+        entity.setOwner(userEntityMapper.toEntity(domain.getOwner()));
         entity.setCreationDate(domain.getCreationDate());
         entity.setExpirationDate(domain.getExpirationDate());
         return entity;
@@ -29,12 +34,11 @@ public class SkillOfferEntityMapper {
             return null;
         }
 
-        SkillOffer domain = new SkillOffer();
-        domain.setId(entity.getId()); //read id
+        SkillOffer domain = new SkillOffer(entity.getId());
         domain.setTitle(entity.getTitle());
         domain.setDescription(entity.getDescription());
         domain.setCategory(entity.getCategory());
-        domain.setOwnerName(entity.getOwnerName());
+        domain.setOwner(userEntityMapper.toDomain(entity.getOwner()));
         domain.setCreationDate(entity.getCreationDate());
         domain.setExpirationDate(entity.getExpirationDate());
         return domain;
