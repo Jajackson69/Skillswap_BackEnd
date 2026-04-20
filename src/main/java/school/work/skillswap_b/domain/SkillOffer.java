@@ -2,12 +2,15 @@ package school.work.skillswap_b.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Setter
 @Getter
+@NoArgsConstructor
+
 public class SkillOffer {
     @Setter(AccessLevel.NONE)
     private Long id;
@@ -17,8 +20,6 @@ public class SkillOffer {
     private User owner;
     private LocalDateTime creationDate;
     private LocalDateTime expirationDate;
-
-    public SkillOffer() {}
 
     public SkillOffer(Long id) {
         this.id = id;

@@ -1,6 +1,7 @@
 package school.work.skillswap_b.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.AccessLevel;
 
@@ -8,6 +9,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
+
 public class User {
 
     @Setter(AccessLevel.NONE)
@@ -18,8 +21,6 @@ public class User {
     private String email;
     private String bio;
     private LocalDateTime createdAt;
-
-    public User() {}
 
     public User(Long id) {
         this.id = id;

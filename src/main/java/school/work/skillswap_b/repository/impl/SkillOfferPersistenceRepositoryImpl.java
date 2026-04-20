@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import school.work.skillswap_b.domain.SkillOffer;
 import school.work.skillswap_b.entity.SkillOfferEntity;
+import school.work.skillswap_b.entity.UserEntity;
 import school.work.skillswap_b.repository.interfaces.SkillOfferRepository;
 import school.work.skillswap_b.repository.interfaces.SkillOfferPersistenceRepository;
+import school.work.skillswap_b.repository.interfaces.UserRepository;
 import school.work.skillswap_b.repository.mappers.SkillOfferEntityMapper;
 import school.work.skillswap_b.repository.mappers.UserEntityMapper;
 
@@ -16,8 +18,8 @@ import java.util.List;
 public class SkillOfferPersistenceRepositoryImpl implements SkillOfferPersistenceRepository {
 
     private final SkillOfferRepository jpaRepository;
+    private final UserRepository userRepository;
     private final SkillOfferEntityMapper mapper;
-    private final UserEntityMapper userEntityMapper;
 
     @Override
     public List<SkillOffer> findAll() {
@@ -38,6 +40,10 @@ public class SkillOfferPersistenceRepositoryImpl implements SkillOfferPersistenc
     @Override
     public SkillOffer save(SkillOffer domain) {
         SkillOfferEntity entity = mapper.toEntity(domain);
+
+        UserEntity ownerRef = userRepository.getReferenceById(domain.getOwner().getId());
+        entity.setOwner(ownerRef);
+
         SkillOfferEntity saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
     }
@@ -50,7 +56,7 @@ public class SkillOfferPersistenceRepositoryImpl implements SkillOfferPersistenc
         entity.setTitle(domain.getTitle());
         entity.setDescription(domain.getDescription());
         entity.setCategory(domain.getCategory());
-        entity.setOwner(userEntityMapper.toEntity(domain.getOwner()));
+        entity.setOwner(userRepository.getReferenceById(domain.getOwner().getId())); // ← fix ici aussi
         entity.setCreationDate(domain.getCreationDate());
         entity.setExpirationDate(domain.getExpirationDate());
 
