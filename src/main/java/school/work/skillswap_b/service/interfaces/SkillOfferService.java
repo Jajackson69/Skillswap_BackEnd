@@ -1,19 +1,17 @@
 package school.work.skillswap_b.service.interfaces;
 
-import school.work.skillswap_b.dto.CreateSkillOfferRequest;
-import school.work.skillswap_b.dto.SkillOfferResponse;
-
+import school.work.skillswap_b.domain.SkillOffer;
 import java.util.List;
 
 public interface SkillOfferService {
 
-    List<SkillOfferResponse> getAll();
+    List<SkillOffer> getAll();
 
-    SkillOfferResponse getById(long id);
+    SkillOffer getById(long id);
 
-    SkillOfferResponse create(CreateSkillOfferRequest request);
+    SkillOffer create(SkillOffer skillOffer);
 
-    SkillOfferResponse update(long id, CreateSkillOfferRequest request);
+    SkillOffer update(long id, SkillOffer skillOffer);
 
     void delete(long id);
 }

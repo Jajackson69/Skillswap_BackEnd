@@ -7,10 +7,11 @@ import school.work.skillswap_b.domain.User;
 import school.work.skillswap_b.entity.SkillOfferEntity;
 import school.work.skillswap_b.entity.UserEntity;
 import school.work.skillswap_b.repository.interfaces.SkillOfferRepository;
+import school.work.skillswap_b.repository.interfaces.UserRepository;
 import school.work.skillswap_b.repository.mappers.SkillOfferEntityMapper;
-import school.work.skillswap_b.repository.mappers.UserEntityMapper;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,15 +20,15 @@ class SkillOfferPersistenceRepositoryImplTest {
 
     private SkillOfferRepository jpaRepository;
     private SkillOfferEntityMapper mapper;
-    private UserEntityMapper userEntityMapper;
+    private UserRepository userRepository;
     private SkillOfferPersistenceRepositoryImpl repository;
 
     @BeforeEach
     void setUp() {
         jpaRepository = mock(SkillOfferRepository.class);
         mapper = mock(SkillOfferEntityMapper.class);
-        userEntityMapper = mock(UserEntityMapper.class);
-        repository = new SkillOfferPersistenceRepositoryImpl(jpaRepository, mapper, userEntityMapper);
+        userRepository = mock(UserRepository.class);
+        repository = new SkillOfferPersistenceRepositoryImpl(jpaRepository, userRepository, mapper);
     }
 
     @Test
@@ -75,14 +76,22 @@ class SkillOfferPersistenceRepositoryImplTest {
     @Test
     void save_shouldMapDomainToEntity_andReturnMappedDomain() {
         // Arrange
+        User owner = new User(1L);
+
         SkillOffer domain = new SkillOffer();
+        domain.setOwner(owner);
+
         SkillOfferEntity entity = new SkillOfferEntity();
         SkillOfferEntity savedEntity = new SkillOfferEntity();
+        SkillOfferEntity fullEntity = new SkillOfferEntity(); // ← après reload
+        UserEntity ownerEntity = new UserEntity();
         SkillOffer expected = new SkillOffer();
 
         when(mapper.toEntity(domain)).thenReturn(entity);
+        when(userRepository.getReferenceById(owner.getId())).thenReturn(ownerEntity); // ← fix
         when(jpaRepository.save(entity)).thenReturn(savedEntity);
-        when(mapper.toDomain(savedEntity)).thenReturn(expected);
+        when(jpaRepository.findById(savedEntity.getId())).thenReturn(Optional.of(fullEntity)); // ← reload
+        when(mapper.toDomain(fullEntity)).thenReturn(expected);
 
         // Act
         SkillOffer result = repository.save(domain);
@@ -92,16 +101,16 @@ class SkillOfferPersistenceRepositoryImplTest {
         assertSame(expected, result);
 
         verify(mapper).toEntity(domain);
+        verify(userRepository).getReferenceById(owner.getId());
         verify(jpaRepository).save(entity);
-        verify(mapper).toDomain(savedEntity);
+        verify(mapper).toDomain(fullEntity);
     }
-
     @Test
     void update_shouldUpdateEntity_andReturnMappedDomain_whenEntityExists() {
         // Arrange
         Long id = 1L;
 
-        User owner  = new User(1L);
+        User owner = new User(1L);
         owner.setFirstName("Alice");
 
         UserEntity ownerEntity = new UserEntity();
@@ -117,13 +126,17 @@ class SkillOfferPersistenceRepositoryImplTest {
         SkillOfferEntity savedEntity = new SkillOfferEntity();
         savedEntity.setTitle("New Title");
 
+        SkillOfferEntity fullEntity = new SkillOfferEntity(); // ← après le findById post-save
+        fullEntity.setTitle("New Title");
+
         SkillOffer expected = new SkillOffer();
         expected.setTitle("New Title");
 
-        when(jpaRepository.findById(id)).thenReturn(java.util.Optional.of(entity));
-        when(userEntityMapper.toEntity(owner)).thenReturn(ownerEntity);
+        when(jpaRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(userRepository.getReferenceById(owner.getId())).thenReturn(ownerEntity); // ← fix
         when(jpaRepository.save(entity)).thenReturn(savedEntity);
-        when(mapper.toDomain(savedEntity)).thenReturn(expected);
+        when(jpaRepository.findById(savedEntity.getId())).thenReturn(Optional.of(fullEntity)); // ← reload
+        when(mapper.toDomain(fullEntity)).thenReturn(expected);
 
         // Act
         SkillOffer result = repository.update(id, domain);
@@ -133,10 +146,9 @@ class SkillOfferPersistenceRepositoryImplTest {
         assertEquals("New Title", entity.getTitle());
         assertSame(expected, result);
 
-        verify(jpaRepository).findById(id);
-        verify(userEntityMapper).toEntity(owner);
+        verify(jpaRepository, times(2)).findById(any());
+        verify(userRepository).getReferenceById(owner.getId());
         verify(jpaRepository).save(entity);
-        verify(mapper).toDomain(savedEntity);
     }
 
     @Test

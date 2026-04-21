@@ -1,19 +1,18 @@
 package school.work.skillswap_b.service.interfaces;
 
-import school.work.skillswap_b.dto.UserRequest;
-import school.work.skillswap_b.dto.UserResponse;
+import school.work.skillswap_b.domain.User;
 
 import java.util.List;
 
 public interface UserService {
 
-    List<UserResponse> getAll();
+    List<User> getAll();
 
-    UserResponse getById(Long id);
+    User getById(Long id);
 
-    UserResponse create(UserRequest request);
+    User create(User user);
 
-    UserResponse update(Long id, UserRequest request);
+    User update(Long id, User user);
 
     void delete(Long id);
 }
