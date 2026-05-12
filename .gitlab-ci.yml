@@ -1,36 +1,40 @@
 stages:
-  - build
   - test
-  - deploy
+  - build
 
-variables:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-
-build-job:
-  stage: build
-  script:
-    - powershell -Command "if (Test-Path .gradle) { Remove-Item -Recurse -Force .gradle }"
-    - powershell -Command "if (Test-Path build) { Remove-Item -Recurse -Force build }"
-    - java -version
-    - ./gradlew clean build -x test
-  artifacts:
-    paths:
-      - build/libs/
-
-test-job:
+test:
   stage: test
+  image: eclipse-temurin:17-jdk-alpine
+  services:
+    - name: postgres:15-alpine
+      alias: postgres
+  variables:
+    POSTGRES_DB: skillswap
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: $DB_PASSWORD
+    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/skillswap
+    SPRING_DATASOURCE_USERNAME: postgres
+    SPRING_DATASOURCE_PASSWORD: $DB_PASSWORD
   script:
-    - ./gradlew test
-  artifacts:
-    when: always
-    paths:
-      - build/test-results/test/
-      - build/reports/tests/test/
+    - chmod +x gradlew
+    - ./gradlew test --no-daemon
 
-deploy-prod:
-  stage: deploy
+build-backend:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
   script:
-    - echo "Deploying branch $CI_COMMIT_BRANCH to production..."
-  environment: production
+    - docker build -t skillswap-backend .
+  only:
+    - main
+
+build-frontend:
+  stage: build
+  image: docker:24
+  services:
+    - docker:24-dind
+  script:
+    - docker build --build-arg VITE_API_URL=$VITE_API_URL -t skillswap-frontend ../SkillSwap_f
   only:
     - main
