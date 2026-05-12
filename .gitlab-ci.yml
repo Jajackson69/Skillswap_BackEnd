@@ -12,20 +12,14 @@ build-backend:
   stage: build
   script:
     - docker build -t skillswap-backend .
-  only:
-    - main
 
 build-frontend:
   stage: build
   script:
     - docker build --build-arg VITE_API_URL=$env:VITE_API_URL -t skillswap-frontend ../../SkillSwap_f
-  only:
-    - main
 
 deploy:
   stage: deploy
   script:
     - $env:DB_PASSWORD = $env:DB_PASSWORD
     - docker compose up -d --build
-  only:
-    - main
