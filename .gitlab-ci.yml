@@ -13,11 +13,6 @@ build-backend:
   script:
     - docker build -t skillswap-backend .
 
-build-frontend:
-  stage: build
-  script:
-    - docker build --build-arg VITE_API_URL=$env:VITE_API_URL -t skillswap-frontend ../../SkillSwap_f
-
 deploy:
   stage: deploy
   script:

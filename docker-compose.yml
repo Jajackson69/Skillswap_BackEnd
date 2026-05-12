@@ -29,16 +29,5 @@ services:
       postgres:
         condition: service_healthy
 
-  frontend:
-    build:
-      context: ../../SkillSwap_f
-      args:
-        VITE_API_URL: http://skillswap_backend:8080/api
-    container_name: skillswap_frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-
 volumes:
   postgres_data:
