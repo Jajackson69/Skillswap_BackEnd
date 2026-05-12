@@ -1,29 +1,15 @@
 stages:
   - test
   - build
+  - deploy
 
 test:
   stage: test
-  image: eclipse-temurin:17-jdk-alpine
-  services:
-    - name: postgres:15-alpine
-      alias: postgres
-  variables:
-    POSTGRES_DB: skillswap
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: $DB_PASSWORD
-    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/skillswap
-    SPRING_DATASOURCE_USERNAME: postgres
-    SPRING_DATASOURCE_PASSWORD: $DB_PASSWORD
   script:
-    - chmod +x gradlew
-    - ./gradlew test --no-daemon
+    - .\gradlew.bat test --no-daemon
 
 build-backend:
   stage: build
-  image: docker:24
-  services:
-    - docker:24-dind
   script:
     - docker build -t skillswap-backend .
   only:
@@ -31,10 +17,15 @@ build-backend:
 
 build-frontend:
   stage: build
-  image: docker:24
-  services:
-    - docker:24-dind
   script:
-    - docker build --build-arg VITE_API_URL=$VITE_API_URL -t skillswap-frontend ../SkillSwap_f
+    - docker build --build-arg VITE_API_URL=$env:VITE_API_URL -t skillswap-frontend ../../SkillSwap_f
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  script:
+    - $env:DB_PASSWORD = $env:DB_PASSWORD
+    - docker compose up -d --build
   only:
     - main
