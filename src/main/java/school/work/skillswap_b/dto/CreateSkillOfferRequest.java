@@ -3,8 +3,12 @@ package school.work.skillswap_b.dto;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import school.work.skillswap_b.domain.AvailabilityDay;
+import school.work.skillswap_b.domain.Format;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,4 +32,8 @@ public class CreateSkillOfferRequest {
 
     @Future(message = "Expiration date must be in the future")
     private LocalDateTime expirationDate;
+
+    private Format format;
+
+    private Set<AvailabilityDay> availability = new HashSet<>();
 }

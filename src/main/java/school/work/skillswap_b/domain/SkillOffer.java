@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -20,6 +22,8 @@ public class SkillOffer {
     private User owner;
     private LocalDateTime creationDate;
     private LocalDateTime expirationDate;
+    private Format format;
+    private Set<AvailabilityDay> availability = new HashSet<>();
 
     public SkillOffer(Long id) {
         this.id = id;

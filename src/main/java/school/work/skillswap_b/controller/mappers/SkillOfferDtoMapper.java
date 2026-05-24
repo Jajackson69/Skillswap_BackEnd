@@ -24,6 +24,8 @@ public class SkillOfferDtoMapper {
         domain.setCategory(request.getCategory());
         domain.setOwner(owner);
         domain.setExpirationDate(request.getExpirationDate());
+        domain.setFormat(request.getFormat());
+        domain.setAvailability(request.getAvailability());
         return domain;
     }
 
@@ -36,6 +38,8 @@ public class SkillOfferDtoMapper {
         response.setDescription(domain.getDescription());
         response.setCategory(domain.getCategory());
         response.setOwner(userDtoMapper.toResponse(domain.getOwner()));
+        response.setFormat(domain.getFormat());
+        response.setAvailability(domain.getAvailability());
         response.setCreationDate(domain.getCreationDate());
         response.setExpirationDate(domain.getExpirationDate());
         return response;

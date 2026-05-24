@@ -9,7 +9,6 @@ import school.work.skillswap_b.repository.interfaces.SkillOfferRepository;
 import school.work.skillswap_b.repository.interfaces.SkillOfferPersistenceRepository;
 import school.work.skillswap_b.repository.interfaces.UserRepository;
 import school.work.skillswap_b.repository.mappers.SkillOfferEntityMapper;
-import school.work.skillswap_b.repository.mappers.UserEntityMapper;
 
 import java.util.List;
 
@@ -56,9 +55,11 @@ public class SkillOfferPersistenceRepositoryImpl implements SkillOfferPersistenc
         entity.setTitle(domain.getTitle());
         entity.setDescription(domain.getDescription());
         entity.setCategory(domain.getCategory());
-        entity.setOwner(userRepository.getReferenceById(domain.getOwner().getId())); // ← fix ici aussi
+        entity.setOwner(userRepository.getReferenceById(domain.getOwner().getId()));
         entity.setCreationDate(domain.getCreationDate());
         entity.setExpirationDate(domain.getExpirationDate());
+        entity.setFormat(domain.getFormat());
+        entity.setAvailability(domain.getAvailability() != null ? domain.getAvailability() : new java.util.HashSet<>());
 
         SkillOfferEntity saved = jpaRepository.save(entity);
         return mapper.toDomain(saved);
