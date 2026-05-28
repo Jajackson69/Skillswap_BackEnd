@@ -3,6 +3,7 @@ package school.work.skillswap_b.service.impl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import school.work.skillswap_b.domain.SkillOffer;
+import school.work.skillswap_b.exception.NotFoundException;
 import school.work.skillswap_b.repository.interfaces.SkillOfferPersistenceRepository;
 
 import java.util.List;
@@ -114,7 +115,7 @@ class SkillOfferServiceImplTest {
         Long id = 1L;
         when(repository.existsById(id)).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> service.delete(id));
+        assertThrows(NotFoundException.class, () -> service.delete(id));
         verify(repository).existsById(id);
         verify(repository, never()).deleteById(any());
     }

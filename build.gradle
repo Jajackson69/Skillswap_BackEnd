@@ -3,7 +3,7 @@ plugins {
     id 'org.springframework.boot' version '4.0.3'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'jacoco'
-    id 'org.sonarqube' version '5.0.0.4638'
+    id 'org.sonarqube' version '7.3.0.8198'
 }
 
 group = 'school.work'
@@ -54,9 +54,9 @@ tasks.named('jacocoTestReport') {
 
 sonar {
     properties {
-        property "sonar.projectKey", "skillswap-backend"
-        property "sonar.qualitygate.wait", true
-        property "sonar.host.url", "http://localhost:9000"
+        property "sonar.projectKey", "jajackson69_skillswap-backend"
+        property "sonar.organization", "jajackson69"
+        property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml"
     }
 }

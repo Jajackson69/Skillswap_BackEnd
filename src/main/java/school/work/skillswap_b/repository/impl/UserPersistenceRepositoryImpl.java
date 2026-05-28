@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import school.work.skillswap_b.domain.User;
 import school.work.skillswap_b.entity.UserEntity;
+import school.work.skillswap_b.exception.NotFoundException;
 import school.work.skillswap_b.repository.interfaces.UserPersistenceRepository;
 import school.work.skillswap_b.repository.interfaces.UserRepository;
 import school.work.skillswap_b.repository.mappers.UserEntityMapper;
@@ -28,7 +29,7 @@ public class UserPersistenceRepositoryImpl implements UserPersistenceRepository 
     @Override
     public User findById(Long id) {
         UserEntity entity = jpaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+                .orElseThrow(() -> new NotFoundException("User not found with id " + id));
         return mapper.toDomain(entity);
     }
 
@@ -42,11 +43,16 @@ public class UserPersistenceRepositoryImpl implements UserPersistenceRepository 
     @Override
     public User update(Long id, User user) {
         UserEntity entity = jpaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+                .orElseThrow(() -> new NotFoundException("User not found with id " + id));
 
         entity.setFirstName(user.getFirstName());
         entity.setLastName(user.getLastName());
-        entity.setEmail(user.getEmail());
+        // Only overwrite email when one was actually supplied.
+        // Profile updates do not carry an email, so guarding this
+        // prevents the email from being wiped to null on profile edits.
+        if (user.getEmail() != null) {
+            entity.setEmail(user.getEmail());
+        }
         entity.setBio(user.getBio());
 
         UserEntity saved = jpaRepository.save(entity);

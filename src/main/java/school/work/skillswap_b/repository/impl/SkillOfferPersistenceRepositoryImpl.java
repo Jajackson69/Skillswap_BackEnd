@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import school.work.skillswap_b.domain.SkillOffer;
 import school.work.skillswap_b.entity.SkillOfferEntity;
 import school.work.skillswap_b.entity.UserEntity;
+import school.work.skillswap_b.exception.NotFoundException;
 import school.work.skillswap_b.repository.interfaces.SkillOfferRepository;
 import school.work.skillswap_b.repository.interfaces.SkillOfferPersistenceRepository;
 import school.work.skillswap_b.repository.interfaces.UserRepository;
@@ -31,7 +32,7 @@ public class SkillOfferPersistenceRepositoryImpl implements SkillOfferPersistenc
     @Override
     public SkillOffer findById(Long id) {
         SkillOfferEntity entity = jpaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("SkillOffer not found with id " + id));
+                .orElseThrow(() -> new NotFoundException("SkillOffer not found with id " + id));
 
         return mapper.toDomain(entity);
     }
@@ -50,13 +51,14 @@ public class SkillOfferPersistenceRepositoryImpl implements SkillOfferPersistenc
     @Override
     public SkillOffer update(Long id, SkillOffer domain) {
         SkillOfferEntity entity = jpaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("SkillOffer not found"));
+                .orElseThrow(() -> new NotFoundException("SkillOffer not found with id " + id));
 
         entity.setTitle(domain.getTitle());
         entity.setDescription(domain.getDescription());
         entity.setCategory(domain.getCategory());
         entity.setOwner(userRepository.getReferenceById(domain.getOwner().getId()));
-        entity.setCreationDate(domain.getCreationDate());
+        // creationDate is set once at creation and must never be reassigned on update.
+        // The update request carries no creationDate, so touching it here wiped it to null.
         entity.setExpirationDate(domain.getExpirationDate());
         entity.setFormat(domain.getFormat());
         entity.setAvailability(domain.getAvailability() != null ? domain.getAvailability() : new java.util.HashSet<>());

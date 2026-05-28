@@ -10,8 +10,8 @@ import school.work.skillswap_b.domain.SkillOffer;
 import school.work.skillswap_b.domain.User;
 import school.work.skillswap_b.dto.CreateSkillOfferRequest;
 import school.work.skillswap_b.dto.SkillOfferResponse;
-import school.work.skillswap_b.repository.interfaces.UserPersistenceRepository;
 import school.work.skillswap_b.service.interfaces.SkillOfferService;
+import school.work.skillswap_b.service.interfaces.UserService;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public class SkillOfferController {
 
     private final SkillOfferService service;
     private final SkillOfferDtoMapper mapper;       //Mapper in controller now
-    private final UserPersistenceRepository userRepository;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<SkillOfferResponse>> getAllSkillOffers() {
@@ -43,7 +43,7 @@ public class SkillOfferController {
     public ResponseEntity<SkillOfferResponse> createSkillOffer(
             @Valid @RequestBody CreateSkillOfferRequest request) {
 
-        User owner = userRepository.findById(request.getUserId());
+        User owner = userService.getById(request.getUserId());
         SkillOffer domain = mapper.toDomain(request, owner);       // DTO to Domain
         SkillOffer saved = service.create(domain);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toResponse(saved));
@@ -54,7 +54,7 @@ public class SkillOfferController {
             @PathVariable Long id,
             @Valid @RequestBody CreateSkillOfferRequest request) {
 
-        User owner = userRepository.findById(request.getUserId());
+        User owner = userService.getById(request.getUserId());
         SkillOffer domain = mapper.toDomain(request, owner);       // DTO to Domain
         SkillOffer saved = service.update(id, domain);
         return ResponseEntity.ok(mapper.toResponse(saved));        // Domain to DTO
